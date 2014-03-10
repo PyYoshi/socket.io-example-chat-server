@@ -1,14 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Socket.io Example - Chat Web Client</title>
-	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-	
-	<script type="text/javascript">
+    <title>Socket.io Example - Chat Web Client</title>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 
-	</script>
+    <script type="text/javascript">
+        var password = "1234";
+        var host = location.origin;
+        var socket = io.connect(host, {query:"password=" + password});
+
+        // Events https://github.com/LearnBoost/socket.io/wiki/Exposed-events#wiki-client
+
+        socket.on('connect', function() {
+            console.group("socket.io: connected!");
+            console.info("socket.io - sessionId: " + socket.socket.transport.sessid);
+            console.info("socket.io - connectType: " + socket.socket.transport.name);
+            console.groupEnd();
+        });
+
+        socket.on('disconnect', function() {
+            console.group("socket.io: disconnect!");
+            console.info("socket.io - sessionId: " + socket.socket.transport.sessid);
+            console.info("socket.io - connectType: " + socket.socket.transport.name);
+            console.groupEnd();
+        });
+
+        socket.on('connect_failed', function() {
+            console.group("socket.io: connect_failed!");
+            console.error("socket.io - sessionId: " + socket.socket.transport.sessid);
+            console.error("socket.io - connectType: " + socket.socket.transport.name);
+            console.groupEnd();
+        });
+
+        socket.on('error', function(reason) {
+            console.group("socket.io: error!");
+            console.error(reason);
+            console.groupEnd();
+        });
+
+        socket.on('message', function(data){
+            console.group('message');
+            console.info(data);
+            console.groupEnd();
+        });
+
+        function joinRoom(roomName){
+            socket.emit('room', {roomName:roomName});
+        }
+
+        function message(msg){
+            socket.emit(
+                'message', 
+                {
+                    msg:msg
+                }
+            );
+        }
+    </script>
 </head>
 <body>
-Hello World!
+    <p>Please Open Console(Ctrl+Shift+i)</p>
+    <p><button onclick="joinRoom('Room1')">Join Room1</button></p>
+    <p><button onclick="joinRoom('Room2')">Join Room2</button></p>
+    <p><button onclick="joinRoom('Room3')">Join Room3</button></p>
+    <p><button onclick="message('aiueo')">Message "aiueo"</button></p>
+    <p><button onclick="message('kakikukeko')">Message "kakikukeko"</button></p>
+    <p></p>
 </body>
 </html>
